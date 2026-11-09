@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Chat Local</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <!-- Fondo animado -->
+  <div class="bg">
+    <span class="blob b1"></span><span class="blob b2"></span><span class="blob b3"></span>
+    <div class="stars"></div>
+  </div>
+
+  <!-- ================= LOGIN / REGISTRO ================= -->
+  <section id="auth" class="auth-screen">
+    <div class="auth-card glass">
+      <div class="logo-bubble">💬</div>
+      <h1 class="hello">¡HOLA!</h1>
+      <h2>Bienvenido al chat</h2>
+      <p class="muted" id="authSubtitle">Inicia sesión para entrar a la sala.</p>
+
+      <div class="tabs">
+        <div class="tab-indicator"></div>
+        <button class="tab active" data-tab="login">Entrar</button>
+        <button class="tab" data-tab="register">Crear cuenta</button>
+      </div>
+
+      <form id="authForm" autocomplete="on">
+        <label>Usuario
+          <input id="username" type="text" placeholder="Tu nombre de usuario" autocomplete="username" required />
+        </label>
+        <label>Contraseña
+          <div class="pass-wrap">
+            <input id="password" type="password" placeholder="Mínimo 8 caracteres" autocomplete="current-password" required />
+            <button type="button" id="togglePass" class="eye" title="Mostrar contraseña">👁</button>
+          </div>
+        </label>
+        <label id="confirmWrap" class="hidden">Confirmar contraseña
+          <input id="password2" type="password" placeholder="Repite la contraseña" autocomplete="new-password" />
+        </label>
+        <p id="authError" class="error"></p>
+        <button id="authBtn" class="btn-primary" type="submit">
+          <span>Entrar al chat</span>
+        </button>
+      </form>
+    </div>
+  </section>
+
+  <!-- ================= APP DE CHAT ================= -->
+  <section id="app" class="app hidden">
+    <!-- Barra lateral -->
+    <aside class="sidebar glass" id="sidebar">
+      <div class="me">
+        <button class="avatar big" id="myAvatar" title="Cambiar foto de perfil"></button>
+        <div class="me-info">
+          <strong id="myName"></strong>
+          <span class="status-online">● En línea</span>
+        </div>
+        <button class="icon-btn" id="logoutBtn" title="Cerrar sesión">⏻</button>
+        <input type="file" id="avatarInput" accept="image/*" hidden />
+      </div>
+
+      <div class="search">
+        <input id="searchInput" placeholder="🔍  Buscar personas..." />
+      </div>
+
+      <div class="chat-list" id="chatList"></div>
+    </aside>
+
+    <!-- Conversación -->
+    <main class="chat glass">
+      <header class="chat-header">
+        <button class="icon-btn back" id="backBtn" title="Volver">←</button>
+        <div class="avatar" id="chatAvatar"></div>
+        <div class="chat-title">
+          <strong id="chatName">Sala general</strong>
+          <span id="chatStatus" class="muted small">Todos los usuarios</span>
+        </div>
+      </header>
+
+      <div class="messages" id="messages"></div>
+
+      <div class="typing hidden" id="typing">
+        <span class="dots"><i></i><i></i><i></i></span>
+        <span id="typingText"></span>
+      </div>
+
+      <!-- Vista previa de imagen antes de enviar -->
+      <div class="preview hidden" id="preview">
+        <img id="previewImg" alt="Vista previa" />
+        <input id="previewCaption" placeholder="Añade un comentario..." />
+        <button class="icon-btn" id="previewCancel" title="Cancelar">✕</button>
+        <button class="send-btn" id="previewSend" title="Enviar">➤</button>
+      </div>
+
+      <!-- Barra de grabación -->
+      <div class="recorder hidden" id="recorder">
+        <button class="icon-btn danger" id="recCancel" title="Cancelar">🗑</button>
+        <span class="rec-dot"></span>
+        <span id="recTime">0:00</span>
+        <div class="wave" id="wave"></div>
+        <button class="send-btn" id="recSend" title="Enviar audio">➤</button>
+      </div>
+
+      <form class="composer" id="composer">
+        <div class="emoji-wrap">
+          <button type="button" class="icon-btn" id="emojiBtn" title="Emojis">😊</button>
+          <div class="emoji-panel hidden" id="emojiPanel"></div>
+        </div>
+        <button type="button" class="icon-btn" id="attachBtn" title="Enviar foto">📎</button>
+        <button type="button" class="icon-btn" id="cameraBtn" title="Tomar foto">📷</button>
+        <input type="file" id="fileInput" accept="image/*" hidden />
+        <input id="msgInput" placeholder="Escribe un mensaje..." autocomplete="off" />
+        <button type="button" class="send-btn mic" id="micBtn" title="Grabar audio">🎤</button>
+        <button type="submit" class="send-btn hidden" id="sendBtn" title="Enviar">➤</button>
+      </form>
+    </main>
+  </section>
+
+  <!-- Cámara -->
+  <div class="modal hidden" id="cameraModal">
+    <div class="camera-box glass">
+      <video id="video" autoplay playsinline muted></video>
+      <canvas id="canvas" hidden></canvas>
+      <div class="flash" id="flash"></div>
+      <div class="camera-actions">
+        <button class="icon-btn" id="camClose" title="Cerrar">✕</button>
+        <button class="shutter" id="shutter" title="Tomar foto"></button>
+        <button class="icon-btn" id="camSwitch" title="Cambiar cámara">🔄</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Visor de imágenes -->
+  <div class="modal hidden" id="lightbox">
+    <img id="lightboxImg" alt="Imagen" />
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

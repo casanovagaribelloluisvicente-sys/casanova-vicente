@@ -1,0 +1,14 @@
+{
+  "name": "chat-local",
+  "version": "1.0.0",
+  "description": "Chat en tiempo real con usuarios, fotos, cámara y notas de voz (localhost)",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js"
+  },
+  "dependencies": {
+    "express": "^4.21.2",
+    "socket.io": "^4.8.1"
+  }
+}
